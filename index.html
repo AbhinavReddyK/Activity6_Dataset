@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Menu Planner</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-planner {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .ingredients-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ingredients-list li {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: #f8f9fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredients-list input {
+            margin-left: 0.5rem;
+        }
+
+        .dish-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dish-list li {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: #f8f9fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .dish-list button {
+            margin-left: auto;
+            padding: 0.25rem 0.5rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dish-list button:hover,
+        .dish-list button:focus {
+            background-color: #45a049;
+        }
+
+        .add-dish-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .add-dish-form input,
+        .add-dish-form select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover,
+        button:focus {
+            background-color: #45a049;
+        }
+
+        .remove-btn {
+            background-color: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 0.5rem;
+            }
+            
+            nav {
+                flex-direction: column;
+            }
+            
+            .ingredients-list {
+                display: grid;
+                gap: 0.5rem;
+            }
+            
+            .dish-list {
+                display: grid;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Interactive Menu Planner</h1>
+            <div class="nav-links">
+                <a href="#menu">Menu</a>
+                <a href="#ingredients">Ingredients</a>
+                <a href="#dishes">Dishes</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="menu-planner">
+            <h2>Add New Dish</h2>
+            <form class="add-dish-form">
+                <input type="text" id="dishName" placeholder="Enter dish name">
+                <select id="dishType">
+                    <option value="starter">Starter</option>
+                    <option value="main">Main Course</option>
+                    <option value="dessert">Dessert</option>
+                </select>
+                <button type="submit" onclick="addDish(event)" onkeydown="addDish(event)">Add Dish</button>
+            </form>
+
+            <h2>Ingredients</h2>
+            <ul class="ingredients-list" id="ingredientList">
+                <!-- Ingredients will be added here -->
+            </ul>
+
+            <h2>Current Menu</h2>
+            <ul class="dish-list" id="dishList">
+                <!-- Dishes will be added here -->
+            </ul>
+        </section>
+    </main>
+
+    <script>
+        let dishes = [];
+
+        function addDish(event) {
+            event.preventDefault();
+            
+            const dishName = document.getElementById('dishName').value;
+            const dishType = document.getElementById('dishType').value;
+
+            if (dishName && dishType) {
+                const dish = {
+                    id: Date.now(),
+                    name: dishName,
+                    type: dishType
+                };
+
+                dishes.push(dish);
+                displayDishes();
+                clearForm();
+            }
+        }
+
+        function displayDishes() {
+            const dishList = document.getElementById('dishList');
+            dishList.innerHTML = '';
+
+            dishes.forEach(dish => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${dish.name}</span>
+                    <button onclick="removeDish(${dish.id})" onkeydown="removeDish(${dish.id})">Remove</button>
+                `;
+                dishList.appendChild(li);
+            });
+        }
+
+        function removeDish(id) {
+            dishes = dishes.filter(dish => dish.id !== id);
+            displayDishes();
+        }
+
+        // Add initial ingredients
+        const ingredients = [
+            "Flour", "Eggs", "Milk", "Sugar", "Salt", "Butter", "Sauce", "Vegetables", "Meat", "Dairy"
+        ];
+
+        function addIngredients() {
+            const ingredientList = document.getElementById('ingredientList');
+            ingredientList.innerHTML = '';
+
+            ingredients.forEach(ingredient => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${ingredient}</span>
+                    <input type="number" min="0" value="0">
+                `;
+                ingredientList.appendChild(li);
+            });
+        }
+
+        addIngredients();
+        displayDishes();
+    </script>
+</body>
+</html>
